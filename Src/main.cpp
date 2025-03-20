@@ -110,10 +110,9 @@ int main() {
                     fsm.ChangeState(inputIt->second);
                 }
             }
-
             fsm.Update();
-          
         }
+        
     }
     return 0;
 }

@@ -12,32 +12,13 @@ public:
 
 class FSM {
 public:
-    void AddState(const std::string& name, std::shared_ptr<State> state) {
-        states[name] = std::move(state);
-    }
+    void AddState(const std::string& name, std::shared_ptr<State> state);
 
-    void ChangeState(const std::string& name) {
-        if (states.find(name) != states.end()) {
-            if (currentState) {
-                currentState->Exit();
-            }
-            currentState = states[name];
-            currentState->Enter();
-        }
-        else {
-            std::cerr << "State Not Found: " << name << std::endl;
-        }
-    }
+    void ChangeState(const std::string& name);
 
-    void Update() {
-        if (currentState) {
-            currentState->Update();
-        }
-    }
+    void Update();
 
-    std::string GetCurrentState() const {
-        return currentState ? typeid(*currentState).name() : "NONE";
-    }
+    std::string GetCurrentState() const;
 
 private:
     std::unordered_map<std::string, std::shared_ptr<State>> states;
