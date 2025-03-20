@@ -69,17 +69,24 @@ public:
     }
 };
 
-int main(){
+int main() {
+
+    //TAL CUAL LA FOTO DE CLASE PERO SI ESTAS EN DIVING Y PULSAS LA C SE CAMBIA A STANDING
     FSM fsm;
 
-    fsm.AddState("Standing", std::make_shared<StandingState>());
-    fsm.AddState("Ducking", std::make_shared<DuckingState>());
-    fsm.AddState("Jumping", std::make_shared<JumpingState>());
-    fsm.AddState("Diving", std::make_shared<DivingState>());
+    fsm.AddState(typeid(StandingState).name(), std::make_shared<StandingState>());
+    fsm.AddState(typeid(DuckingState).name(), std::make_shared<DuckingState>());
+    fsm.AddState(typeid(JumpingState).name(), std::make_shared<JumpingState>());
+    fsm.AddState(typeid(DivingState).name(), std::make_shared<DivingState>());
 
-    fsm.AddTransitions("Ducking", "Standing");
+    fsm.ChangeState(typeid(StandingState).name());  // Comienza en estado Idle
 
-    fsm.ChangeState("Standing");  // Comienza en estado Idle
+    static std::unordered_map<std::string, std::unordered_map<std::string, std::string>> transitions = {
+           {typeid(StandingState).name(), {{"a", typeid(DuckingState).name()},{"b", typeid(JumpingState).name()}}},
+           {typeid(DuckingState).name(),  {{"a", typeid(StandingState).name()}}},
+           {typeid(JumpingState).name(),  {{"a", typeid(DivingState).name()}}},
+           {typeid(DivingState).name(),  {{"c", typeid(StandingState).name()}}}
+    };
 
     std::string input;
 
@@ -88,18 +95,20 @@ int main(){
             input = _getch(); 
 
             switch (input[0]) {
-            case 'a':  // Idle
-                fsm.ChangeState("Idle");
-                break;
-            case 'b':  // Cambiar al estado de correr
-                fsm.ChangeState("Running");
-                break;
             case 'q': 
                 std::cout << "Exiting...\n";
                 return 0;
-            default:
-                std::cout << "Invalid key! Use WASD to move, R to run, Q to quit.\n";
-                break;
+            }
+
+            std::string currentState = fsm.GetCurrentState();
+
+            auto stateIt = transitions.find(currentState);
+
+            if (stateIt != transitions.end()) {
+                auto inputIt = stateIt->second.find(input);
+                if (inputIt != stateIt->second.end()) {
+                    fsm.ChangeState(inputIt->second);
+                }
             }
 
             fsm.Update();

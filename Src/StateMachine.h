@@ -11,32 +11,21 @@ public:
 };
 
 class FSM {
-private:
-    std::unordered_map<std::string, std::shared_ptr<State>> states;
-    std::unordered_map< std::shared_ptr<State>, std::shared_ptr<State>> transitions;
-    std::shared_ptr<State> currentState;
-    std::string currentStateName;
-
 public:
     void AddState(const std::string& name, std::shared_ptr<State> state) {
         states[name] = std::move(state);
     }
-    void AddTransitions(const std::string& from, std::shared_ptr<State> to) {
-        transitions[states[from]] = transitions[states[to]];
-    }
 
     void ChangeState(const std::string& name) {
-        auto it = states.find(name);
-        if (it != states.end()) {
+        if (states.find(name) != states.end()) {
             if (currentState) {
                 currentState->Exit();
             }
-            currentState = it->second;
-            currentStateName = name;
+            currentState = states[name];
             currentState->Enter();
         }
         else {
-            std::cerr << "Invalid state transition from " << currentStateName << " to " << name << "!\n";
+            std::cerr << "State Not Found: " << name << std::endl;
         }
     }
 
@@ -46,11 +35,11 @@ public:
         }
     }
 
-    const std::string& GetCurrentStateName() const {
-        return currentStateName;
+    std::string GetCurrentState() const {
+        return currentState ? typeid(*currentState).name() : "NONE";
     }
 
-    std::shared_ptr<State> GetCurrentState() const {
-        return currentState;
-    }
+private:
+    std::unordered_map<std::string, std::shared_ptr<State>> states;
+    std::shared_ptr<State> currentState;
 };
