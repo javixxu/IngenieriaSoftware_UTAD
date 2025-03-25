@@ -20,11 +20,21 @@ public:
     }
 };
 
+class MoveCommand :public Command {
+    Character* character;
+    unsigned gamepad;
+public:
+    MoveCommand(Character* cha, unsigned game):character(cha),gamepad(game) {
+    }
+    void execute() override {
+        character->x += !!(gamepad & 8) - !!(gamepad & 4);
+        character->y += !!(gamepad & 2) - !!(gamepad & 1);
+    }
+};
 
 int main() {
 	Tigr* screen = tigrWindow(800, 600, "Command Pattern - Character Movement", 0);
     Character character;
-
     std::vector<unsigned> commands;
 
     bool is_recording = true;
@@ -33,7 +43,7 @@ int main() {
         if (tigrKeyDown(screen, 'R')) is_recording = !is_recording, frame = 0;
 
         unsigned gamepad = 0;
-
+        
         // recording
         if (is_recording) {
 
@@ -46,6 +56,7 @@ int main() {
 
         }
         else {
+            
             gamepad = commands[frame++ % commands.size()];
         }
 
