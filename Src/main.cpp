@@ -10,14 +10,6 @@ class Character {
 public:
     int x, y;
     Character() : x(100), y(100) {}
-    void Move(int dx, int dy) {
-        x += dx;
-        y += dy;
-    }
-    void UndoMove(int dx, int dy) {
-        x -= dx;
-        y -= dy;
-    }
 };
 
 class MoveCommand :public Command {
@@ -30,6 +22,10 @@ public:
         character->x += !!(gamepad & 8) - !!(gamepad & 4);
         character->y += !!(gamepad & 2) - !!(gamepad & 1);
     }
+    void undo() override {
+        character->x -= !!(gamepad & 8) + !!(gamepad & 4);
+        character->y -= !!(gamepad & 2) + !!(gamepad & 1);
+    };
 };
 
 int main() {

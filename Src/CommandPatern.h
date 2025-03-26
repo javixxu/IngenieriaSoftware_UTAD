@@ -5,6 +5,7 @@
 class Command {
 public:
 	virtual void execute() = 0;
+    virtual void undo() = 0;
 };
 
 class Invoker {
@@ -23,7 +24,7 @@ public:
             Command* CMP = history[index];
 
             // Ejecutar el comando
-            CMP->execute();
+            CMP->undo();
 
             // Eliminar el comando de la lista despues de ejecutarlo
             history.erase(history.begin() + index);
