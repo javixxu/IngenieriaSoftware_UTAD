@@ -23,8 +23,8 @@ public:
         character->y += !!(gamepad & 2) - !!(gamepad & 1);
     }
     void undo() override {
-        character->x -= !!(gamepad & 8) + !!(gamepad & 4);
-        character->y -= !!(gamepad & 2) + !!(gamepad & 1);
+        character->x -= (!!(gamepad & 8) - !!(gamepad & 4));
+        character->y -= (!!(gamepad & 2) - !!(gamepad & 1));
     };
 };
 
@@ -52,12 +52,11 @@ int main() {
             gamepad |= tigrKeyHeld(screen, TK_DOWN) * 2;
             gamepad |= tigrKeyHeld(screen, TK_LEFT) * 4;
             gamepad |= tigrKeyHeld(screen, TK_RIGHT) * 8;
-
             commands.push_back(gamepad);
             invoker.AddCommand(new MoveCommand(&character, gamepad));
         }
         else {
-            invoker.ExecuteCommand(frame++);
+            invoker.ExecuteCommand();
             //gamepad = commands[frame++ % commands.size()];
         }
 

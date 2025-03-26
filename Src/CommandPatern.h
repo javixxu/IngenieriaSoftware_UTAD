@@ -18,6 +18,7 @@ public:
 	void ExecuteCommand(int command = -1) {
         // Si el comando no se especifica, usamos el ultimo
         int index = (command == -1) ? history.size() - 1 : command;
+        command = history.size() - command;
 
         // Verificar que el indice es valido
         if (index >= 0 && index < history.size()) {
@@ -31,4 +32,12 @@ public:
             delete CMP;
         }
 	}
+    void deleteHistory() {
+        if (history.empty())return;
+       delete history.back();
+       history.pop_back();
+    }
+    ~Invoker() {
+        deleteHistory();
+    }
 };
